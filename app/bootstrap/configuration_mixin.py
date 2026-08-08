@@ -223,6 +223,13 @@ class BootstrapConfigurationMixin:
         # 当前环境文件覆盖平台兜底值。
         defaults.update(file_config)
 
+        # Database credentials are deployment secrets. A process-level URL
+        # overrides the checked-in template, matching Alembic and allowing
+        # CI or containers to inject their own database endpoint.
+        environment_database_url = os.getenv("EAP_SYSTEM_DATABASE_URL")
+        if environment_database_url:
+            defaults["system_database_url"] = environment_database_url
+
         # 构造Bootstrap时显式传入的参数拥有最高优先级。
         # prompts/tools/agents等Python对象也在这里进入最终配置。
         defaults.update(self.config)

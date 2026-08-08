@@ -152,6 +152,28 @@ def test_explicit_bootstrap_value_overrides_environment_file(
     assert bootstrap.config["host"] == "192.0.2.10"
 
 
+def test_database_url_environment_overrides_environment_file(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    selector = tmp_path / "config.yaml"
+    _write_yaml(selector, {"environment": "test"})
+    config = _environment_config(
+        "test",
+        host="127.0.0.1",
+        log_level="DEBUG",
+    )
+    config["system_database_url"] = "sqlite+aiosqlite:///from-file.db"
+    _write_yaml(tmp_path / "config.test.yaml", config)
+    database_url = "postgresql+asyncpg://ci@localhost/platform"
+    monkeypatch.setenv("EAP_SYSTEM_DATABASE_URL", database_url)
+
+    bootstrap = Bootstrap({"config_file": str(selector)})
+    bootstrap._load_config()
+
+    assert bootstrap.config["system_database_url"] == database_url
+
+
 def test_rejects_unknown_environment(
     tmp_path: Path,
 ) -> None:
