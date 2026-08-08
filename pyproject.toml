@@ -1,0 +1,225 @@
+###############################################################################
+# Enterprise AI Platform
+#
+# 项目统一配置文件
+#
+# 负责管理：
+#   1. 项目基本信息
+#   2. Python版本
+#   3. 开发工具配置
+#   4. 代码格式化
+#   5. 静态检查
+#   6. 测试配置
+#
+###############################################################################
+
+[project]
+
+name = "enterprise-ai-platform"
+
+version = "1.0.0"
+
+description = "企业级 AI 应用开发平台"
+
+readme = "README.md"
+
+requires-python = ">=3.11,<3.13"
+
+license = { text = "MIT" }
+
+authors = [
+    { name = "Enterprise AI Platform" }
+]
+
+keywords = [
+    "AI",
+    "Agent",
+    "LLM",
+    "Runtime",
+    "Workflow",
+    "RAG",
+    "Text2SQL",
+    "Enterprise"
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+dependencies = [
+    "fastapi>=0.118,<1",
+    "jsonschema>=4.25,<5",
+    "openai>=1.99,<2",
+    "pydantic>=2.11,<3",
+    "PyYAML>=6,<7",
+    "Jinja2>=3.1,<4",
+    "SQLAlchemy>=2.0,<3",
+    "aiosqlite>=0.20,<1",
+    "alembic>=1.14,<2",
+    "uvicorn>=0.37,<1",
+    "prometheus-client>=0.21,<1",
+    "opentelemetry-api>=1.30,<2",
+    "opentelemetry-sdk>=1.30,<2",
+    "opentelemetry-exporter-otlp-proto-http>=1.30,<2",
+    "pydantic-settings>=2.10,<3",
+    "httpx>=0.28,<1",
+    "asyncpg>=0.29,<1",
+    "redis>=5,<7",
+    "pymilvus>=2.6,<3",
+    "minio>=7.2,<8",
+    "python-multipart>=0.0.20,<1",
+    "pypdf>=5,<7",
+    "python-docx>=1.1,<2",
+    "sentence-transformers>=3,<6",
+    "sentencepiece>=0.2,<1",
+    "loguru>=0.7,<1",
+]
+
+[project.optional-dependencies]
+
+dev = [
+    "coverage>=7.6",
+    "httpx>=0.27",
+    "pytest>=8.3",
+    "ruff>=0.12",
+]
+redis = [
+    "redis>=5,<7",
+]
+postgresql = [
+    "asyncpg>=0.29,<1",
+]
+
+###############################################################################
+# Ruff
+###############################################################################
+
+[tool.ruff]
+
+line-length = 88
+
+target-version = "py312"
+
+exclude = [
+    ".git",
+    ".idea",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist"
+]
+
+###############################################################################
+# Ruff Lint
+###############################################################################
+
+[tool.ruff.lint]
+
+select = [
+    "E",
+    "F",
+    "I",
+    "UP"
+]
+
+ignore = [
+    # Keep explicit ``str, Enum`` for Python 3.11-compatible serialized enums.
+    "UP042",
+    # Registry remains compatible with pre-PEP-695 generic syntax.
+    "UP046",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Route modules intentionally consume the public names assembled by
+# ``app.bootstrap.routes.common``. Keeping this compatibility facade avoids
+# duplicating a very large HTTP composition import list in every route file.
+"app/bootstrap/routes/*.py" = ["F403", "F405"]
+"app/bootstrap/routes/common.py" = ["F401"]
+
+###############################################################################
+# Black
+###############################################################################
+
+[tool.black]
+
+line-length = 88
+
+target-version = [
+    "py312"
+]
+
+###############################################################################
+# isort
+###############################################################################
+
+[tool.isort]
+
+profile = "black"
+
+line_length = 88
+
+###############################################################################
+# Pytest
+###############################################################################
+
+[tool.pytest.ini_options]
+
+pythonpath = [
+    "."
+]
+
+testpaths = [
+    "tests"
+]
+
+python_files = [
+    "test_*.py"
+]
+
+###############################################################################
+# MyPy
+###############################################################################
+
+[tool.mypy]
+
+python_version = "3.12"
+
+ignore_missing_imports = true
+
+warn_unused_configs = true
+
+warn_return_any = false
+
+check_untyped_defs = true
+
+###############################################################################
+# Coverage
+###############################################################################
+
+[tool.coverage.run]
+
+source = [
+    "app"
+]
+
+[tool.coverage.report]
+
+fail_under = 75
+show_missing = true
+skip_covered = false
+
+###############################################################################
+# Build
+###############################################################################
+
+[build-system]
+
+requires = [
+    "setuptools>=68"
+]
+
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,15 @@
+schema_version: 1
+name: default
+description: Default enterprise LLM Agent
+model:
+  profile: dashscope-fast
+prompt:
+  ref: prompts/default-agent-system.yaml
+tools: []
+memory:
+  enabled: true
+knowledge:
+  base_ids: []
+  limit: 5
+evaluation:
+  datasets: []

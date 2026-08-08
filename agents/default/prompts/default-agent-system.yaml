@@ -1,0 +1,6 @@
+name: default-agent-system
+description: Default enterprise Agent prompt
+template: default-agent-system.jinja2
+version: workspace
+status: published
+variables: []

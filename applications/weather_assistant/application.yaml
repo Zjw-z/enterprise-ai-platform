@@ -1,0 +1,36 @@
+schema_version: 1
+name: weather-assistant
+title: 天气助手
+description: 支持多轮会话和记忆的天气查询应用
+status: published
+target:
+  type: agent
+  name: weather-agent
+presentation:
+  template: chat
+  icon: cloud-sun
+menu:
+  enabled: true
+  title: 天气助手
+  parent: ai-applications
+  order: 10
+security:
+  permission: business:weather:use
+session:
+  enabled: true
+  resumable: true
+routing:
+  keywords: [天气, 气温, 下雨, 降雨, 穿衣, 台风, 晴天]
+  examples: [明天天气怎么样, 周末会下雨吗]
+  priority: 100
+input_schema:
+  type: object
+  properties:
+    message:
+      type: string
+      title: 请输入天气问题
+  required: [message]
+welcome_message: 你好，我可以查询天气并提供出行建议。
+suggestions:
+  - 杭州明天天气怎么样？
+  - 上海周末适合出行吗？

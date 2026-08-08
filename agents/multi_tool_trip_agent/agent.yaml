@@ -1,0 +1,20 @@
+# Python 包目录使用下划线；对外 Agent 名称保持不变。
+schema_version: 1
+name: multi-tool-trip-agent
+description: 组合天气、景点和预算信息生成旅行方案
+model:
+  profile: dashscope-reasoning
+prompt:
+  ref: prompts/multi-tool-trip-prompt.yaml
+tools:
+- learning_get_weather
+- search_city_attractions
+- calculate_trip_budget
+memory:
+  enabled: true
+knowledge:
+  # 知识库 ID 属于具体部署环境，请在管理台绑定，不在学习案例中写死。
+  base_ids: []
+  limit: 5
+evaluation:
+  datasets: []

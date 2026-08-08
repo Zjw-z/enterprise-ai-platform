@@ -1,0 +1,53 @@
+# Enterprise AI Platform 部署依赖
+#
+# 当前项目在 Python 3.11 完成全量验证，同时兼容 Python 3.12：
+#   python -m pip install --upgrade pip
+#   python -m pip install -r requirements.txt
+#
+# 本文件包含平台运行以及所有已实现基础设施后端所需的依赖。
+# 测试、覆盖率和代码检查工具不属于生产部署依赖。
+
+# HTTP API 与服务启动
+fastapi==0.118.0
+uvicorn==0.37.0
+
+# 配置、数据校验与序列化
+pydantic==2.11.7
+pydantic-settings==2.10.1
+PyYAML==6.0.2
+Jinja2==3.1.6
+jsonschema==4.25.1
+
+# LLM 与远程 HTTP 调用
+# OpenAI兼容客户端同时用于OpenAI、阿里云百炼等兼容接口。
+openai==1.99.9
+httpx==0.28.1
+
+# ORM、数据库迁移和本地SQLite
+SQLAlchemy==2.0.49
+alembic==1.18.5
+aiosqlite==0.22.1
+
+# 生产PostgreSQL与分布式Redis后端
+# asyncpg用于system_database_url和PostgreSQL Memory。
+# redis用于Redis Memory。
+asyncpg>=0.29,<1
+redis>=5,<7
+pymilvus>=2.6,<3
+minio>=7.2,<8
+python-multipart>=0.0.20,<1
+pypdf>=5,<7
+python-docx>=1.1,<2
+
+# 本地Embedding与Cross-Encoder重排模型运行时（同时安装torch和transformers）。
+sentence-transformers>=3,<6
+sentencepiece>=0.2,<1
+
+# 平台日志
+loguru==0.7.3
+
+# 指标与分布式追踪
+prometheus-client>=0.21,<1
+opentelemetry-api>=1.30,<2
+opentelemetry-sdk>=1.30,<2
+opentelemetry-exporter-otlp-proto-http>=1.30,<2

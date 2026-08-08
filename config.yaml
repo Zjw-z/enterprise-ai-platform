@@ -1,0 +1,7 @@
+# Enterprise AI Platform 环境选择文件
+#
+# 本文件只负责选择运行环境，不承载任何业务配置。
+# 可选值：test、production。
+# 也可以通过 EAP_ENVIRONMENT 环境变量覆盖。
+
+environment: test

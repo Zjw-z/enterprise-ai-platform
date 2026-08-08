@@ -1,0 +1,12 @@
+.git
+.idea
+.pytest_cache
+.ruff_cache
+__pycache__
+*.pyc
+*.pyo
+data/models
+data/*.db
+web/node_modules
+web/.next
+web/dist

@@ -1,0 +1,47 @@
+schema_version: 1
+name: travel-planner
+title: 智能旅行规划
+description: 由模型自主选择天气、景点与预算工具生成旅行方案
+status: published
+target:
+  type: agent
+  name: multi-tool-trip-agent
+presentation:
+  template: form_result
+  icon: map
+  renderer: travel-plan
+menu:
+  enabled: true
+  title: 旅行规划
+  parent: ai-applications
+  order: 20
+security:
+  allowed_roles: []
+session:
+  enabled: true
+  resumable: true
+routing:
+  keywords: [旅行, 旅游, 行程, 景点, 预算, 酒店, 出游]
+  examples: [帮我规划三天旅行, 制定旅游行程和预算]
+  priority: 100
+input_schema:
+  type: object
+  properties:
+    destination:
+      type: string
+      title: 目的地
+      default: 杭州
+    days:
+      type: integer
+      title: 出行天数
+      default: 3
+    people:
+      type: integer
+      title: 出行人数
+      default: 2
+    preference:
+      type: string
+      title: 旅行偏好
+      default: 舒适型
+  required: [destination, days, people]
+welcome_message: 填写出行信息，Agent 会自主规划并选择需要的工具。

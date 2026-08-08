@@ -1,0 +1,26 @@
+schema_version: 1
+name: travel-collaboration
+version: workspace
+description: 天气分析 Agent 与旅行规划 Agent 协作生成行程
+publish: true
+
+nodes:
+  - id: weather_analysis
+    type: agent
+    agent: weather-agent
+    message_key: message
+    timeout_seconds: 120
+    max_retries: 1
+    input_mapping:
+      message: $input.message
+
+  - id: trip_planning
+    type: agent
+    agent: multi-tool-trip-agent
+    message_key: message
+    dependencies:
+      - weather_analysis
+    timeout_seconds: 180
+    max_retries: 1
+    input_mapping:
+      message: $outputs.weather_analysis.content

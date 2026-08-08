@@ -1,0 +1,26 @@
+.env
+.env.*
+config.test.yaml
+config.test.yml
+.idea/
+tmp/
+data/*.db
+*.tsbuildinfo
+.wrangler/
+# 生产配置模板必须随代码评审；其中只能保存非敏感配置和 Secret 引用。
+
+# 本地大模型权重体积较大，由部署环境独立管理，不提交到 Git。
+data/models/
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.venv/
+web/node_modules/
+web/.next/
+web/dist/

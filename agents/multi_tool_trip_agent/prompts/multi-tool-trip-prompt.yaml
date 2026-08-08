@@ -1,0 +1,14 @@
+# 归属于 multi-tool-trip-agent。
+name: multi-tool-trip-prompt
+description: 组合天气、景点和预算信息生成旅行方案
+template: multi-tool-trip-prompt.jinja2
+version: workspace
+status: published
+variables:
+- name: company
+  description: 使用该旅行助手的公司名称
+  required: true
+  default: 万达信息
+  type: string
+  schema: {}
+  trusted: false

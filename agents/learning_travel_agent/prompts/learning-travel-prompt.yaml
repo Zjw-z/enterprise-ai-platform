@@ -1,0 +1,14 @@
+# 归属于 learning-travel-agent。
+name: learning-travel-prompt
+description: 城市出行助手系统提示词
+template: learning-travel-prompt.jinja2
+version: workspace
+status: published
+variables:
+- name: company
+  description: 使用该出行助手的公司名称
+  required: true
+  default: 万达信息
+  type: string
+  schema: {}
+  trusted: false

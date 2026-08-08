@@ -1,0 +1,13 @@
+name: weather-agent-system
+description: 天气Prompt
+template: weather-agent-system.jinja2
+version: workspace
+status: published
+variables:
+- name: company
+  description: 公司名称
+  required: true
+  default: 万达信息
+  type: string
+  schema: {}
+  trusted: false

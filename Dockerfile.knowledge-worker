@@ -1,0 +1,15 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /opt/enterprise-ai-platform
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
+COPY app ./app
+COPY agents ./agents
+COPY data/models ./data/models
+COPY migrations ./migrations
+COPY alembic.ini config.yaml config.production.yaml knowledge_worker.py ./
+CMD ["python", "knowledge_worker.py"]

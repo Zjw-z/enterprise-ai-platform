@@ -1,0 +1,17 @@
+# Python 包目录使用下划线；对外 Agent 名称保持不变。
+schema_version: 1
+name: weather-agent
+description: 天气查询Agent
+model:
+  profile: dashscope-reasoning
+prompt:
+  ref: prompts/weather-agent-system.yaml
+tools:
+- get_weather
+memory:
+  enabled: true
+knowledge:
+  base_ids: []
+  limit: 5
+evaluation:
+  datasets: []

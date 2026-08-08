@@ -1,0 +1,306 @@
+# 生产环境配置模板
+# 生产密钥建议使用环境变量，不要明文写入文件。
+
+environment: production
+config_file: null
+host: 0.0.0.0
+port: 8000
+log_level: INFO
+log_format: json
+runtime_timeout_seconds: 300
+task_max_retries: 2
+runtime_store_backend: postgresql
+runtime_durable_queue_enabled: true
+runtime_worker_enabled: false
+runtime_worker_poll_interval_seconds: 1.0
+runtime_worker_lease_seconds: 60
+runtime_worker_heartbeat_seconds: 15
+runtime_worker_concurrency: 4
+runtime_worker_max_attempts: 3
+# 安全审计必须持久化；服务重启后仍可查询操作证据。
+audit_backend: postgresql
+# 清理任务由maintenance_worker.py独立执行，API进程保持关闭。
+retention_worker_enabled: false
+retention_interval_seconds: 3600
+retention_batch_size: 1000
+retention_task_days: 90
+retention_trace_days: 30
+retention_audit_days: 365
+retention_usage_days: 365
+retention_outbox_days: 30
+# Secret解析顺序；启用Vault或挂载目录后可将其放到environment之前。
+secret_provider_order: [mounted_file, vault, environment]
+secret_cache_ttl_seconds: 60
+mounted_secret_directory: null
+vault_enabled: false
+vault_address: null
+vault_token_env: VAULT_TOKEN
+vault_mount: secret
+vault_path_prefix: enterprise-ai
+vault_namespace: null
+# 生产环境填写随镜像发布、由可信团队维护的Tool包，例如 company_tools。
+tool_python_discovery_packages:
+  - agents.weather_agent.tools
+  - agents.learning_travel_agent.tools
+  - agents.multi_tool_trip_agent.tools
+# Agent、Prompt和本地Tool声明随Git制品部署，不保存源代码到数据库。
+agent_packages_enabled: true
+agent_packages_root: agents
+agent_workspace_writable: false
+system_management_enabled: true
+system_database_url: postgresql+asyncpg://eap@127.0.0.1/eap
+system_database_schema_mode: validate
+system_database_pool_size: 20
+system_database_max_overflow: 40
+system_database_pool_timeout_seconds: 30
+system_jwt_secret: null
+system_jwt_secret_env: EAP_SYSTEM_JWT_SECRET
+system_access_token_ttl_seconds: 1800
+system_refresh_token_ttl_seconds: 604800
+system_initial_admin_username: admin
+system_initial_admin_password: null
+system_initial_admin_password_env: EAP_SYSTEM_ADMIN_PASSWORD
+system_initial_tenant_id: default
+system_frontend_origins:
+  - https://ai.example.com
+minio_endpoint: localhost:9000
+minio_access_key: null
+minio_secret_key: null
+minio_secure: false
+minio_bucket: enterprise-ai
+knowledge_upload_max_bytes: 20971520
+knowledge_upload_batch_max_files: 20
+knowledge_presigned_upload_expiry_seconds: 900
+# 上传请求只负责保存原文件；解析Worker使用PostgreSQL租约异步消费。
+# API进程只提交任务；由knowledge_worker.py独立消费。
+knowledge_ingestion_worker_enabled: false
+knowledge_ingestion_worker_poll_interval_seconds: 1.0
+knowledge_ingestion_worker_batch_size: 2
+knowledge_ingestion_worker_max_attempts: 5
+knowledge_ingestion_worker_lease_seconds: 600
+vector_outbox_lease_timeout_seconds: 900
+knowledge_chunk_size: 1000
+knowledge_chunk_overlap: 150
+# 企业文档解析：存在 MINERU_API_TOKEN 时使用 MinerU 精准解析，
+# 未配置时自动回退到本地轻量解析。
+document_parser_provider: auto
+mineru_base_url: https://mineru.net
+mineru_api_token: null
+mineru_api_token_env: MINERU_API_TOKEN
+mineru_model_version: vlm
+mineru_language: ch
+mineru_enable_table: true
+mineru_enable_formula: true
+mineru_poll_interval_seconds: 2.0
+mineru_timeout_seconds: 300.0
+document_parser_fallback_enabled: true
+document_quality_minimum_score: 70
+document_quality_minimum_characters: 50
+document_quality_maximum_replacement_ratio: 0.01
+document_quality_maximum_duplicate_ratio: 0.4
+vector_store_backend: milvus
+milvus_host: localhost
+milvus_port: 19530
+milvus_database: enterprise_ai
+milvus_token: null
+milvus_token_env: MILVUS_TOKEN
+milvus_auto_create: true
+milvus_memory_collection: agent_memory_vectors
+milvus_knowledge_collection: knowledge_vectors
+milvus_embedding_model: bge-m3
+milvus_embedding_dimensions: 1024
+knowledge_rerank_model: bge-reranker-large
+knowledge_retrieval_candidate_limit: 30
+# 实际候选数=min(candidate_limit, 返回条数*multiplier)，避免交互检索固定重排30条。
+knowledge_retrieval_candidate_multiplier: 3
+# 相同知识库、查询和返回条数在TTL内复用结果；设为0可关闭。
+knowledge_retrieval_cache_ttl_seconds: 60
+knowledge_retrieval_cache_max_entries: 256
+# API 进程不消费向量 Outbox；由 Dockerfile.worker 独立扩缩容。
+vector_outbox_worker_enabled: false
+vector_outbox_poll_interval_seconds: 1.0
+vector_outbox_batch_size: 20
+metrics_enabled: true
+metrics_path: /metrics
+observability_service_name: enterprise-ai-platform
+# 配置 OpenTelemetry Collector 的 OTLP/HTTP traces 地址后再启用。
+otel_enabled: false
+otel_exporter_otlp_endpoint: null
+otel_trace_sample_ratio: 0.1
+milvus_metric_type: COSINE
+milvus_index_type: HNSW
+milvus_index_m: 16
+milvus_index_ef_construction: 200
+milvus_search_ef: 64
+milvus_connect_attempts: 12
+milvus_connect_backoff_seconds: 2.0
+milvus_delete_verify_attempts: 50
+milvus_delete_verify_backoff_seconds: 0.2
+
+memory_backend: postgresql
+# 生产Memory复用PostgreSQL集群，但应使用独立schema/数据库和连接池配额。
+memory_sqlite_path: data/memory.db
+memory_redis_url: null
+memory_redis_url_env: EAP_MEMORY_REDIS_URL
+memory_postgresql_dsn: null
+memory_postgresql_dsn_env: EAP_MEMORY_POSTGRESQL_DSN
+memory_message_ttl_seconds: 2592000
+memory_long_term_ttl_seconds: null
+memory_summary_enabled: true
+memory_summary_max_chars: 4000
+# 建议选择低成本模型；模型异常时自动降级为提取式摘要。
+memory_summary_model: null
+memory_auto_extract_enabled: false
+memory_redaction_enabled: true
+memory_minimum_confidence: 0.8
+memory_max_revisions: 10
+# 生产语义检索可指定 embedding_models 中已配置的模型名称。
+memory_embedding_model: bge-m3
+
+security_enabled: true
+authorization_policies: []
+security_jwt_secret: null
+security_jwt_secret_env: EAP_JWT_SECRET
+security_jwt_issuer: enterprise-ai-platform
+security_jwt_audience: enterprise-ai-api
+security_default_requests_per_minute: 120
+security_rate_limit_backend: redis
+tool_state_backend: redis
+tool_state_redis_url: null
+tool_state_redis_url_env: EAP_TOOL_STATE_REDIS_URL
+default_tenant_quota:
+  max_concurrent_tasks: 10
+  max_requests_per_day: 10000
+tenant_quotas: {}
+# 多实例共享租户并发与日请求计数。
+quota_backend: redis
+quota_redis_url: null
+quota_redis_url_env: null
+quota_active_ttl_seconds: 600
+content_safety_enabled: true
+content_safety_blocked_terms: []
+content_safety_case_sensitive: false
+llm_default_daily_token_quota: 10000000
+llm_tenant_daily_token_quotas: {}
+api_principals:
+  platform-admin:
+    api_key: null
+    api_key_env: EAP_ADMIN_API_KEY
+    tenant_id: platform
+    user_id: administrator
+    roles:
+      - platform_admin
+    allowed_agents:
+      - "*"
+    allowed_tools:
+      - "*"
+    allowed_models:
+      - "*"
+    requests_per_minute: 600
+default_model: dashscope-reasoning
+default_agent: default
+default_tools: []
+
+agent_metadata:
+  history_limit: 20
+  max_iterations: 5
+
+# 旧版单模型兼容字段；新项目使用 models。
+api_key: null
+base_url: null
+model: null
+
+models:
+  dashscope-fast:
+    provider: openai_compatible
+    model: qwen-plus
+    api_key: null
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    temperature: 0.5
+    max_tokens: 2048
+    timeout_seconds: 60
+    max_retries: 2
+    backoff_base_seconds: 0.25
+    backoff_max_seconds: 5
+    circuit_failure_threshold: 5
+    circuit_recovery_seconds: 30
+    input_cost_per_million: 0
+    output_cost_per_million: 0
+  dashscope-reasoning:
+    provider: openai_compatible
+    model: qwen3.6-plus-2026-04-02
+    api_key: null
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    temperature: 0.4
+    max_tokens: 4096
+    timeout_seconds: 120
+    max_retries: 2
+    backoff_base_seconds: 0.5
+    backoff_max_seconds: 8
+    circuit_failure_threshold: 5
+    circuit_recovery_seconds: 30
+    input_cost_per_million: 0
+    output_cost_per_million: 0
+
+model_routes: {}
+
+embedding_models:
+  bge-m3:
+    provider: sentence_transformers
+    model: BGE-M3
+    model_path: data/models/embedding/bge-m3
+    dimensions: 1024
+    device: null
+    batch_size: 16
+    normalize_embeddings: true
+rerank_models:
+  bge-reranker-large:
+    provider: cross_encoder
+    model: bge-reranker-large
+    model_path: data/models/reranker/bge-reranker-large
+    device: null
+    batch_size: 16
+    max_length: 512
+  lexical-default:
+    provider: lexical
+    model: lexical-v1
+
+remote_tools: []
+
+prompt_templates: []
+
+mcp_servers: []
+
+a2a_agents: []
+
+# Workflow 执行、节点检查点与 Worker 租约统一保存在 PostgreSQL。
+workflow_backend: postgresql
+workflow_sqlite_path: data/workflow.production.db
+workflow_packages_enabled: true
+workflow_packages_root: workflows
+application_packages_enabled: true
+application_packages_root: applications
+# API 进程只提交任务；独立 workflow_worker.py 进程会覆盖为 true。
+workflow_worker_enabled: false
+# 空闲轮询间隔。
+workflow_worker_poll_interval_seconds: 1
+# 租约必须长于心跳间隔；Worker 异常退出后，过期任务可被其他实例接管。
+workflow_worker_lease_seconds: 60
+workflow_worker_heartbeat_seconds: 15
+# 单个 Worker 每批最多并行执行的工作流数量。
+workflow_worker_concurrency: 4
+# 基础设施异常达到该次数后，执行进入 failed，并保留最后错误。
+workflow_worker_max_attempts: 8
+# 每个定义包含 name、version、publish 和 nodes。
+workflows: []
+
+llm_agents: []
+
+# Python 对象注入入口；纯 YAML 部署保持为空。
+prompts: []
+tools: []
+agents: []
+llm_provider_factories: {}
+workflow_definitions: []
