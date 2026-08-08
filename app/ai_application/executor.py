@@ -33,9 +33,10 @@ class AIApplicationExecutor:
         background: bool = False,
     ) -> dict[str, Any]:
         decision = self.router.route(message, allowed_names=allowed_applications)
+        properties = decision.application.input_schema.get("properties", {})
         routed_input = {
             key: field.get("default")
-            for key, field in decision.application.input_schema.get("properties", {}).items()
+            for key, field in properties.items()
             if isinstance(field, dict) and "default" in field
         }
         routed_input["message"] = message
@@ -44,7 +45,11 @@ class AIApplicationExecutor:
             input=routed_input,
             session_id=session_id,
             user_id=user_id,
-            metadata={**metadata, "entry_mode": "assistant", "routed_application": decision.application.name},
+            metadata={
+                **metadata,
+                "entry_mode": "assistant",
+                "routed_application": decision.application.name,
+            },
             background=background,
         )
         response["routing"] = {

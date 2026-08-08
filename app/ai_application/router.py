@@ -1,7 +1,7 @@
 """Route a natural-language request to one published AI application."""
 
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 from .registry import AIApplicationRegistry
 from .schema import AIApplicationDefinition

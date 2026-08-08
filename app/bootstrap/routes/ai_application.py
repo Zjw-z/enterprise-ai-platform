@@ -98,7 +98,10 @@ def register_ai_application_routes(application) -> None:
     ) -> dict[str, Any]:
         principal = self._authenticate(request)
         if self.ai_application_registry is None or self.ai_application_executor is None:
-            raise HTTPException(status_code=503, detail="AI application routing is unavailable.")
+            raise HTTPException(
+                status_code=503,
+                detail="AI application routing is unavailable.",
+            )
         accessible: set[str] = set()
         for item in self.ai_application_registry.list(include_inactive=False):
             if not _can_access(item, principal):
