@@ -1600,7 +1600,7 @@ class Bootstrap(
             ),
             knowledge_service=(
                 self.container.get(KnowledgeService)
-                if self.config.get("system_management_enabled", True)
+                if KnowledgeService in self.container.providers
                 else None
             ),
             knowledge_ingestion_service=(

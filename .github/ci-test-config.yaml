@@ -5,6 +5,10 @@ log_level: CRITICAL
 default_agent: default
 models: {}
 llm_agents: []
+rerank_models:
+  lexical-default:
+    provider: lexical
+    model: lexical-v1
 memory_backend: in_memory
 audit_backend: in_memory
 system_jwt_secret_env: EAP_SYSTEM_JWT_SECRET
