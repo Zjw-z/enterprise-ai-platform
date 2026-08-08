@@ -1,0 +1,9 @@
+environment: test
+host: 127.0.0.1
+port: 8000
+log_level: CRITICAL
+default_agent: default
+models: {}
+llm_agents: []
+memory_backend: in_memory
+audit_backend: in_memory

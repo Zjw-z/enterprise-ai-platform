@@ -34,7 +34,7 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: alembic upgrade head
       - name: Prepare sanitized test configuration
-        run: cp config.production.yaml config.test.yaml
+        run: cp .github/ci-test-config.yaml config.test.yaml
       - run: python -m coverage run -m pytest -q
       - run: python -m coverage report
       - run: ruff check app tests
