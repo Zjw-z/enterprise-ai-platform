@@ -7,3 +7,5 @@ models: {}
 llm_agents: []
 memory_backend: in_memory
 audit_backend: in_memory
+system_jwt_secret_env: EAP_SYSTEM_JWT_SECRET
+system_initial_admin_password_env: EAP_SYSTEM_ADMIN_PASSWORD

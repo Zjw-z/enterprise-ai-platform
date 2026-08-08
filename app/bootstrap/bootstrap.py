@@ -1029,6 +1029,18 @@ class Bootstrap(
             if system_management_service is not None
             else None
         )
+        knowledge_embedding_name = str(
+            self.config.get("milvus_embedding_model", "bge-m3")
+        )
+        knowledge_embedding = llm_manager.embedding_models.get(
+            knowledge_embedding_name
+        )
+        if vector_outbox_service is not None and knowledge_embedding is None:
+            logger.info(
+                "Knowledge retrieval is disabled because embedding model "
+                "'%s' is not registered.",
+                knowledge_embedding_name,
+            )
         # KnowledgeService管理知识库、文档、文本块、检索和索引状态。
         knowledge_service = (
             KnowledgeService(
@@ -1040,16 +1052,12 @@ class Bootstrap(
                         "knowledge_vectors",
                     )
                 ),
-                embedding_model=str(
-                    self.config.get("milvus_embedding_model", "bge-m3")
-                ),
+                embedding_model=knowledge_embedding_name,
                 embedding_dimensions=int(
                     self.config.get("milvus_embedding_dimensions", 1024)
                 ),
                 vector_store=vector_store,
-                embedding=llm_manager.get_embedding(
-                    str(self.config.get("milvus_embedding_model", "bge-m3"))
-                ),
+                embedding=knowledge_embedding,
                 reranker=(
                     llm_manager.get_reranker(str(self.config["knowledge_rerank_model"]))
                     if self.config.get("knowledge_rerank_model")
@@ -1068,7 +1076,7 @@ class Bootstrap(
                     self.config.get("knowledge_retrieval_cache_max_entries", 256)
                 ),
             )
-            if vector_outbox_service is not None
+            if vector_outbox_service is not None and knowledge_embedding is not None
             else None
         )
         if agent_dependencies is not None:
